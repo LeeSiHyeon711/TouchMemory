@@ -92,9 +92,16 @@ def _group_by_project(items: list[dict]) -> dict[str, list[dict]]:
 @app_commands.describe(
     내용="등록할 내용",
     프로젝트="프로젝트 태그(선택)",
-    리마인드="none/once/daily 중 하나 (기본 none)",
-    날짜="리마인드=once일 때 YYYY-MM-DD",
-    지속="지속 리마인드 여부(기본 거짓)",
+    리마인드="내일부터 다시 보기 / 지정일부터 완료까지 보기 / 매일 다시 보기 중 선택 (기본: 내일부터 다시 보기)",
+    날짜="리마인드=지정일부터 완료까지 보기일 때 YYYY-MM-DD",
+    지속="완료해도 계속 보기 여부(기본 거짓)",
+)
+@app_commands.choices(
+    리마인드=[
+        app_commands.Choice(name="내일부터 다시 보기", value="none"),
+        app_commands.Choice(name="지정일부터 완료까지 보기", value="once"),
+        app_commands.Choice(name="매일 다시 보기", value="daily"),
+    ]
 )
 async def cmd_add(
     interaction: discord.Interaction,
@@ -107,7 +114,7 @@ async def cmd_add(
     await interaction.response.defer()
     if 리마인드 not in _REMIND_TYPES:
         await interaction.followup.send(
-            f"리마인드 값은 {', '.join(sorted(_REMIND_TYPES))} 중 하나여야 합니다."
+            "리마인드 값은 내일부터 다시 보기/지정일부터 완료까지 보기/매일 다시 보기 중 하나여야 합니다."
         )
         return
     try:
@@ -174,7 +181,7 @@ async def cmd_complete(interaction: discord.Interaction, id: int) -> None:
         else:
             await interaction.followup.send(str(exc.detail))
         return
-    note = " (지속 리마인드는 계속 유지됩니다)" if item.get("persistent_reminder") else ""
+    note = " (완료해도 계속 보기 설정된 항목입니다)" if item.get("persistent_reminder") else ""
     await interaction.followup.send(f"완료 처리: `#{item['id']}` {item['content']}{note}")
 
 

@@ -47,11 +47,14 @@ def build_parser() -> argparse.ArgumentParser:
     p_add.add_argument("content", help="기억할 내용")
     p_add.add_argument("--project", default=None, help="프로젝트 태그")
     p_add.add_argument(
-        "--remind", choices=["none", "once", "daily"], default="none", help="리마인드 유형"
+        "--remind",
+        choices=["none", "once", "daily"],
+        default="none",
+        help="리마인드 유형 (none=내일부터 다시 보기, once=지정일부터 완료까지 보기, daily=매일 다시 보기)",
     )
     p_add.add_argument("--date", default=None, help="--remind once일 때 YYYY-MM-DD")
     p_add.add_argument(
-        "--persistent", action="store_true", help="완료 후에도 오늘 요약에 지속 노출"
+        "--persistent", action="store_true", help="완료해도 계속 보기 여부"
     )
 
     p_edit = sub.add_parser("edit", help="항목 수정 (넘긴 옵션만 반영)")
@@ -59,11 +62,14 @@ def build_parser() -> argparse.ArgumentParser:
     p_edit.add_argument("--content", default=None, help="수정할 내용")
     p_edit.add_argument("--project", default=None, help="수정할 프로젝트 태그")
     p_edit.add_argument(
-        "--remind", choices=["none", "once", "daily"], default=None, help="리마인드 유형"
+        "--remind",
+        choices=["none", "once", "daily"],
+        default=None,
+        help="리마인드 유형 (none=내일부터 다시 보기, once=지정일부터 완료까지 보기, daily=매일 다시 보기)",
     )
     p_edit.add_argument("--date", default=None, help="--remind once일 때 YYYY-MM-DD")
     p_edit.add_argument(
-        "--persistent", choices=["on", "off"], default=None, help="지속 노출 여부"
+        "--persistent", choices=["on", "off"], default=None, help="완료해도 계속 보기 여부"
     )
 
     p_delete = sub.add_parser("delete", help="항목 삭제")
@@ -134,13 +140,13 @@ def render_items(items: list[dict]) -> str:
 
         remind_type = item.get("remind_type", "none")
         if remind_type == "once":
-            remind = f"once({item.get('remind_date') or '-'})"
+            remind = f"지정일부터완료까지({item.get('remind_date') or '-'})"
         elif remind_type == "daily":
-            remind = "daily"
+            remind = "매일"
         else:
             remind = "-"
         if item.get("persistent_reminder"):
-            remind += "(지속)"
+            remind += "(완료해도계속)"
 
         rows.append([str(item.get("id")), content, project, status, remind])
 
