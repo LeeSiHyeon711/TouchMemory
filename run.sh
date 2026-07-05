@@ -8,6 +8,9 @@ set -a
 [ -f .env ] && . ./.env
 set +a
 
+# src-layout(src/touchmemory) 패키지를 import 경로에 추가 (클린 .venv에서도 동작하도록)
+export PYTHONPATH="$(pwd)/src:${PYTHONPATH:-}"
+
 mkdir -p logs data backup
 
 API_HOST="${API_HOST:-127.0.0.1}"
