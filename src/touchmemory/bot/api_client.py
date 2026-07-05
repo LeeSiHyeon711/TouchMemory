@@ -62,3 +62,15 @@ class TouchMemoryAPI:
 
     async def get_today_digest(self) -> dict:
         return await self._request("GET", "/digest/today")
+
+    async def post_event(self, event_type: str, item_id: int | None = None) -> dict:
+        payload: dict[str, str | int] = {"event_type": event_type}
+        if item_id is not None:
+            payload["item_id"] = item_id
+        return await self._request("POST", "/events", json=payload)
+
+    async def get_settings(self) -> dict[str, str]:
+        return await self._request("GET", "/settings")
+
+    async def patch_settings(self, **kv: str) -> dict[str, str]:
+        return await self._request("PATCH", "/settings", json=kv)
