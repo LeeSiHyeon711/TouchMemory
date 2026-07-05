@@ -76,8 +76,8 @@ async def on_ready():
 
 
 def _format_item_line(item: dict) -> str:
-    status = "완료" if item["is_done"] else "미완료"
-    return f"`#{item['id']}` {item['content']} ({status})"
+    status = "✅" if item["is_done"] else "⬜"
+    return f"{status} `#{item['id']}` {item['content']}"
 
 
 def _group_by_project(items: list[dict]) -> dict[str, list[dict]]:
